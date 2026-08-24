@@ -184,6 +184,7 @@ src/
 ├── types/
 │   └── sound.ts            # TypeBox schemas (single source of truth for types + validation)
 ├── routes/
+│   ├── docs.ts               # GET / — interactive HTML documentation page
 │   ├── feed.ts              # GET /api/feed — thin: cache → service → response
 │   ├── search.ts             # GET /api/search — validation, cache, service
 │   └── health.ts             # GET /health
@@ -201,3 +202,9 @@ src/
 Routes never touch scraping or cache internals directly — they depend only
 on the `Cache` interface and `MyInstantsService`, so swapping either
 implementation never requires touching route code.
+
+## 8. Author & Credits
+
+- Built by **[Pankaj Thakur](https://thakur.dev)**
+- Soundboard data sourced from **[MyInstants](https://www.myinstants.com)**
+

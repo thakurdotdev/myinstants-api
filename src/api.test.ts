@@ -12,6 +12,8 @@ import { searchRoutes } from "./routes/search";
 import { InFlightRequests } from "./lib/inflight";
 import { MyInstantsService } from "./services/myinstants";
 
+import { docsRoutes } from "./routes/docs";
+
 describe("Cache Utilities & Key Generation", () => {
   it("generates versioned cache keys with page numbers", () => {
     expect(feedCacheKey()).toBe("myinstants:v1:feed:in:page:1");
@@ -100,11 +102,22 @@ describe("API Routes Integration & Pagination", () => {
           return { error: { message: "Invalid request." } };
         }
       })
+      .use(docsRoutes())
       .use(feedRoutes({ cache, myInstants: mockService, inflight, feedCacheTtlSeconds: 300 }))
       .use(searchRoutes({ cache, myInstants: mockService, inflight, searchCacheTtlSeconds: 300 }));
 
     return { app, cache };
   }
+
+  it("GET / returns 200 HTML documentation page", async () => {
+    const { app } = createTestApp(async () => [], async () => []);
+    const response = await app.handle(new Request("http://localhost/"));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    const html = await response.text();
+    expect(html).toContain("MyInstants API");
+    expect(html).toContain("https://myinstants.thakur.dev");
+  });
 
   it("GET /api/feed returns default page 1", async () => {
     let requestedPage: number | undefined;

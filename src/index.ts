@@ -6,6 +6,7 @@ import { InFlightRequests } from "./lib/inflight";
 import { healthRoutes } from "./routes/health";
 import { feedRoutes } from "./routes/feed";
 import { searchRoutes } from "./routes/search";
+import { docsRoutes } from "./routes/docs";
 
 async function main(): Promise<void> {
   const config = loadConfig();
@@ -32,6 +33,7 @@ async function main(): Promise<void> {
       set.status = 500;
       return { error: { message: "Internal server error." } };
     })
+    .use(docsRoutes())
     .use(healthRoutes(cacheKind))
     .use(
       feedRoutes({
