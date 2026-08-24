@@ -31,6 +31,11 @@ async function main(): Promise<void> {
         return { error: { message: "Invalid request." } };
       }
 
+      if (code === "NOT_FOUND") {
+        set.status = 404;
+        return { error: { message: "Route not found." } };
+      }
+
       console.error("[api] Unhandled error:", error);
       set.status = 500;
       return { error: { message: "Internal server error." } };

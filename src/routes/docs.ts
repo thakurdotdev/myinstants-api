@@ -7,6 +7,7 @@ const DOCS_HTML = `<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MyInstants API Reference</title>
   <meta name="description" content="High-performance REST API for MyInstants soundboard by Pankaj Thakur.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔊</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1028,8 +1029,13 @@ const DOCS_HTML = `<!DOCTYPE html>
 </html>`;
 
 export function docsRoutes() {
-  return new Elysia().get("/", ({ set }) => {
-    set.headers["content-type"] = "text/html; charset=utf-8";
-    return DOCS_HTML;
-  });
+  return new Elysia()
+    .get("/", ({ set }) => {
+      set.headers["content-type"] = "text/html; charset=utf-8";
+      return DOCS_HTML;
+    })
+    .get("/favicon.ico", ({ set }) => {
+      set.status = 204;
+      return null;
+    });
 }
