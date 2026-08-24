@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
 import { loadConfig } from "./config";
 import { createCache } from "./cache/cache";
 import { MyInstantsService, UpstreamError } from "./services/myinstants";
@@ -16,6 +17,7 @@ async function main(): Promise<void> {
   const inflight = new InFlightRequests();
 
   const app = new Elysia()
+    .use(cors({ origin: "*" }))
     .onError(({ code, error, set }) => {
       if (error instanceof UpstreamError) {
         set.status = error.status;

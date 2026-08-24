@@ -13,6 +13,7 @@ import { InFlightRequests } from "./lib/inflight";
 import { MyInstantsService } from "./services/myinstants";
 
 import { docsRoutes } from "./routes/docs";
+import { cors } from "@elysiajs/cors";
 
 describe("Cache Utilities & Key Generation", () => {
   it("generates versioned cache keys with page numbers", () => {
@@ -96,6 +97,7 @@ describe("API Routes Integration & Pagination", () => {
     } as unknown as MyInstantsService;
 
     const app = new Elysia()
+      .use(cors({ origin: "*" }))
       .onError(({ code, set }) => {
         if (code === "VALIDATION") {
           set.status = 400;
@@ -108,6 +110,14 @@ describe("API Routes Integration & Pagination", () => {
 
     return { app, cache };
   }
+
+  it("sets CORS Access-Control-Allow-Origin header to * for cross-origin requests", async () => {
+    const { app } = createTestApp(async () => [], async () => []);
+    const response = await app.handle(new Request("http://localhost/api/feed", {
+      headers: { Origin: "https://mywebsite.com" },
+    }));
+    expect(response.headers.get("access-control-allow-origin")).toBe("*");
+  });
 
   it("GET / returns 200 HTML documentation page", async () => {
     const { app } = createTestApp(async () => [], async () => []);
