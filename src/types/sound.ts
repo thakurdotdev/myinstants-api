@@ -14,11 +14,13 @@ export const SoundSchema = t.Object({
 export type Sound = typeof SoundSchema.static;
 
 export const FeedResponseSchema = t.Object({
+  page: t.Integer(),
   data: t.Array(SoundSchema),
 });
 export type FeedResponse = typeof FeedResponseSchema.static;
 
 export const SearchResponseSchema = t.Object({
+  page: t.Integer(),
   data: t.Array(SoundSchema),
 });
 export type SearchResponse = typeof SearchResponseSchema.static;
@@ -38,3 +40,18 @@ export const HealthResponseSchema = t.Object({
   cache: t.Optional(CacheKindSchema),
 });
 export type HealthResponse = typeof HealthResponseSchema.static;
+
+export function isSound(value: unknown): value is Sound {
+  if (typeof value !== "object" || value === null) return false;
+  const s = value as Record<string, unknown>;
+  return (
+    typeof s.id === "string" &&
+    typeof s.name === "string" &&
+    typeof s.url === "string"
+  );
+}
+
+export function isSoundArray(value: unknown): value is Sound[] {
+  return Array.isArray(value) && value.every(isSound);
+}
+

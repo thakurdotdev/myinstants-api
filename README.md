@@ -5,6 +5,8 @@ A small, fast API around the MyInstants India soundboard
 fully typed in strict TypeScript, with an optional Redis cache that falls
 back to an in-memory cache automatically.
 
+**Base URL**: `https://myinstants.thakur.dev`
+
 No database. No authentication. No browser automation — just plain HTTP
 requests and HTML parsing.
 
@@ -26,6 +28,7 @@ Other scripts:
 
 ```bash
 bun run start      # run once (no file-watching)
+bun run test       # run test suite
 bun run typecheck  # tsc --noEmit, strict mode
 ```
 
@@ -79,7 +82,11 @@ immediately with a clear error message rather than failing confusingly later.
 
 ## 5. API endpoints
 
+Base URL: `https://myinstants.thakur.dev`
+
 ### `GET /health`
+
+**Example:** `https://myinstants.thakur.dev/health`
 
 ```json
 { "status": "ok", "cache": "redis" }
@@ -88,35 +95,49 @@ immediately with a clear error message rather than failing confusingly later.
 `cache` is `"redis"` or `"memory"` depending on which backend is active.
 Never exposes Redis credentials or connection details.
 
-### `GET /api/feed`
+### `GET /api/feed?page=<page>&refresh=<boolean>`
 
-Fetches and parses the MyInstants India trending feed.
+Fetches and parses the MyInstants India trending feed with pagination support.
+
+**Example:** `https://myinstants.thakur.dev/api/feed?page=1`
+
+- `page` *(optional, integer >= 1, default `1`)*: Page number to retrieve.
+- `refresh` *(optional, boolean)*: Set to `true` (or send header `Cache-Control: no-cache`) to bypass cache and fetch fresh data from upstream.
 
 ```json
 {
+  "page": 1,
   "data": [
     { "id": "fart", "name": "Fart", "url": "https://www.myinstants.com/media/sounds/fart-2.mp3" }
   ]
 }
 ```
 
-Ordering from the source page is preserved.
+Ordering from the source page is preserved. Invalid `page` (e.g. `<= 0`, non-integer) returns `400`.
 
-### `GET /api/search?q=<query>`
+### `GET /api/search?q=<query>&page=<page>&refresh=<boolean>`
+
+Searches MyInstants sounds by query with pagination support.
+
+**Example:** `https://myinstants.thakur.dev/api/search?q=meme&page=1`
+
+- `q` *(required, non-empty string)*: Search keyword. Missing or blank `q` → `400`:
+  ```json
+  { "error": { "message": "Search query is required." } }
+  ```
+- `page` *(optional, integer >= 1, default `1`)*: Page number to retrieve. Invalid `page` → `400`.
+- `refresh` *(optional, boolean)*: Set to `true` (or send header `Cache-Control: no-cache`) to bypass cache and fetch fresh data.
 
 ```json
 {
+  "page": 1,
   "data": [
     { "id": "vine-boom-sound-70972", "name": "VINE BOOM SOUND", "url": "https://www.myinstants.com/media/sounds/vine-boom.mp3" }
   ]
 }
 ```
 
-- `q` is required. Missing or blank `q` → `400`:
-  ```json
-  { "error": { "message": "Search query is required." } }
-  ```
-- No matches → `200` with `"data": []`.
+- No matches or page out of bounds → `200` with `{"page": <page>, "data": []}`.
 - The query is trimmed and case/whitespace-normalized before it's used as a
   cache key, so `"fart"`, `"  Fart  "`, and `"FART"` all hit the same cache
   entry.
@@ -137,9 +158,15 @@ HTML, or internal implementation detail.
 
 - **Backend selection (startup only):** `REDIS_URL` set and reachable →
   Redis; otherwise → in-memory `Map` with TTL.
-- **Keys:**
-  - `myinstants:feed:in`
-  - `myinstants:search:<normalized-query>`
+- **Versioned Keys:**
+  - `myinstants:v1:feed:in:page:<page>`
+  - `myinstants:v1:search:<normalized-query>:page:<page>`
+- **Smart Validation & Corruption Prevention:**
+  - Cached payloads are validated on retrieval. If malformed or corrupted data is detected, the key is automatically evicted and fresh data is fetched.
+  - In-memory cache uses deep cloning (`structuredClone`) to prevent reference mutations across requests.
+- **Dynamic TTL for Empty Results:**
+  - Normal results are cached according to `FEED_CACHE_TTL` / `SEARCH_CACHE_TTL` (default 300s).
+  - Empty results (`data: []`) use a short 30-second TTL to avoid caching transient upstream empty states and allow newly added sounds to show up quickly.
 - **Stampede prevention:** if multiple requests arrive concurrently for the
   same uncached key, only one upstream fetch happens — the rest await the
   same in-flight promise. This works the same whether the cache is Redis or

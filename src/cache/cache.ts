@@ -2,6 +2,8 @@ import type { CacheKind } from "../types/sound";
 import { MemoryCache } from "./memory-cache";
 import { RedisCache } from "./redis-cache";
 
+export const EMPTY_RESULT_CACHE_TTL_SECONDS = 30;
+
 /**
  * The rest of the application depends on this interface, never on Redis or
  * Map directly. That's what lets feed/search routes stay agnostic to which
@@ -13,12 +15,12 @@ export interface Cache {
   delete(key: string): Promise<void>;
 }
 
-export function feedCacheKey(): string {
-  return "myinstants:feed:in";
+export function feedCacheKey(page = 1): string {
+  return `myinstants:v1:feed:in:page:${page}`;
 }
 
-export function searchCacheKey(normalizedQuery: string): string {
-  return `myinstants:search:${normalizedQuery}`;
+export function searchCacheKey(normalizedQuery: string, page = 1): string {
+  return `myinstants:v1:search:${normalizedQuery}:page:${page}`;
 }
 
 /**

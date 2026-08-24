@@ -34,14 +34,15 @@ export class MemoryCache implements Cache {
       return null;
     }
 
-    // Safe by construction: the only way a value enters `store` is through
-    // this class's own `set<T>`, so the caller-supplied T here matches what
-    // was stored under this key.
-    return entry.value as T;
+    // Return a deep clone so caller mutations cannot corrupt cached state.
+    return structuredClone(entry.value) as T;
   }
 
   async set<T>(key: string, value: T, ttlSeconds: number): Promise<void> {
-    this.store.set(key, { value, expiresAt: Date.now() + ttlSeconds * 1000 });
+    this.store.set(key, {
+      value: structuredClone(value),
+      expiresAt: Date.now() + ttlSeconds * 1000,
+    });
   }
 
   async delete(key: string): Promise<void> {

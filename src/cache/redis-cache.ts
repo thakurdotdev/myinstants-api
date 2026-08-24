@@ -57,7 +57,8 @@ export class RedisCache implements Cache {
       // of assuming a stored string is well-formed JSON matching T.
       return JSON.parse(raw) as T;
     } catch (error) {
-      console.error(`[redis-cache] GET failed for key "${key}":`, error);
+      console.error(`[redis-cache] GET failed or data corrupted for key "${key}":`, error);
+      void this.delete(key).catch(() => {});
       return null;
     }
   }

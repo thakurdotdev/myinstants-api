@@ -34,14 +34,21 @@ export interface MyInstantsServiceOptions {
 export class MyInstantsService {
   constructor(private readonly options: MyInstantsServiceOptions) {}
 
-  async fetchFeed(): Promise<Sound[]> {
-    const html = await this.fetchHtml(new URL(FEED_PATH, ORIGIN));
+  async fetchFeed(page = 1): Promise<Sound[]> {
+    const url = new URL(FEED_PATH, ORIGIN);
+    if (page > 1) {
+      url.searchParams.set("page", String(page));
+    }
+    const html = await this.fetchHtml(url);
     return parseSounds(html, ORIGIN);
   }
 
-  async search(normalizedQuery: string): Promise<Sound[]> {
+  async search(normalizedQuery: string, page = 1): Promise<Sound[]> {
     const url = new URL(SEARCH_PATH, ORIGIN);
     url.searchParams.set("name", normalizedQuery);
+    if (page > 1) {
+      url.searchParams.set("page", String(page));
+    }
     const html = await this.fetchHtml(url);
     return parseSounds(html, ORIGIN);
   }
@@ -58,6 +65,10 @@ export class MyInstantsService {
           Accept: "text/html,application/xhtml+xml",
         },
       });
+
+      if (response.status === 404) {
+        return "";
+      }
 
       if (!response.ok) {
         throw new UpstreamError(
