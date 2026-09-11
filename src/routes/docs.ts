@@ -5,12 +5,66 @@ const DOCS_HTML = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyInstants API Reference</title>
-  <meta name="description" content="High-performance REST API for MyInstants soundboard by Pankaj Thakur.">
+  <title>MyInstants API Reference &bull; Fast REST API for Soundboard Buttons</title>
+  <meta name="description" content="Free, high-performance REST API for the MyInstants soundboard. Search meme sound buttons, fetch trending audio feeds with multi-page pagination, and stream sound clips.">
+  <meta name="keywords" content="myinstants, myinstants api, soundboard api, meme sounds api, discord bot sounds, audio buttons, sound clips, rest api, developer documentation, sound effects">
+  <meta name="author" content="Pankaj Thakur">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://myinstants.thakur.dev/">
+  <meta name="theme-color" content="#000000">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="MyInstants API">
+  <meta property="og:title" content="MyInstants API Reference &bull; Fast REST API for Soundboard Buttons">
+  <meta property="og:description" content="Free, high-performance REST API for the MyInstants soundboard. Search meme sound buttons, fetch trending audio feeds with multi-page pagination, and stream sound clips.">
+  <meta property="og:url" content="https://myinstants.thakur.dev/">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="MyInstants API Reference &bull; Fast REST API for Soundboard Buttons">
+  <meta name="twitter:description" content="Free, high-performance REST API for the MyInstants soundboard. Search meme sound buttons, fetch trending audio feeds with multi-page pagination, and stream sound clips.">
+
+  <!-- Structured Data (Schema.org JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://myinstants.thakur.dev/#website",
+        "url": "https://myinstants.thakur.dev/",
+        "name": "MyInstants API",
+        "description": "High-performance REST API for MyInstants soundboard buttons and meme sounds",
+        "publisher": {
+          "@type": "Person",
+          "name": "Pankaj Thakur",
+          "url": "https://thakur.dev"
+        }
+      },
+      {
+        "@type": "WebAPI",
+        "@id": "https://myinstants.thakur.dev/#webapi",
+        "name": "MyInstants API",
+        "description": "Fast, fully typed REST API around the MyInstants soundboard with multi-page pagination and resilient caching.",
+        "documentation": "https://myinstants.thakur.dev/",
+        "provider": {
+          "@type": "Person",
+          "name": "Pankaj Thakur",
+          "url": "https://thakur.dev"
+        },
+        "termsOfService": "https://myinstants.thakur.dev/"
+      }
+    ]
+  }
+  </script>
+
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔊</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script defer src="https://analytics.thakur.dev/script.js" data-website-id="e059cfa4-b0cd-4aac-a90b-f4bd7cf06673"></script>
   <style>
     :root {
       --bg: #000000;
@@ -595,10 +649,10 @@ const DOCS_HTML = `<!DOCTYPE html>
   </style>
 </head>
 <body>
-  <nav class="nav">
+  <nav class="nav" aria-label="Main Navigation">
     <div class="brand">
       <span class="brand-title">myinstants-api</span>
-      <span class="brand-author">by <a href="https://thakur.dev" target="_blank" rel="noopener">Pankaj Thakur</a></span>
+      <span class="brand-author">by <a href="https://thakur.dev" target="_blank" rel="noopener author">Pankaj Thakur</a></span>
     </div>
     <div class="status-pill">
       <span class="status-dot"></span>
@@ -608,14 +662,14 @@ const DOCS_HTML = `<!DOCTYPE html>
 
   <main class="main">
     <header class="hero">
-      <h1 class="hero-title">API Reference</h1>
+      <h1 class="hero-title">MyInstants API Reference</h1>
       <p class="hero-desc">
         Fast, fully typed REST API around the <a href="https://www.myinstants.com" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;border-bottom:1px solid var(--border);">MyInstants</a> soundboard with multi-page pagination and resilient caching.
       </p>
       <div class="base-url-bar">
         <span class="base-label">Base</span>
         <span class="base-url">https://myinstants.thakur.dev</span>
-        <button class="icon-btn" onclick="copyValue('https://myinstants.thakur.dev', this)" title="Copy Base URL">
+        <button class="icon-btn" onclick="copyValue('https://myinstants.thakur.dev', this)" title="Copy Base URL" aria-label="Copy Base URL">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -624,14 +678,14 @@ const DOCS_HTML = `<!DOCTYPE html>
       </div>
     </header>
 
-    <div class="section-label">Endpoints</div>
+    <h2 class="section-label">Endpoints</h2>
 
     <!-- GET /api/feed -->
     <article class="endpoint">
       <div class="endpoint-header">
         <div class="endpoint-identity">
           <span class="method-get">GET</span>
-          <span class="endpoint-path">/api/feed</span>
+          <h3 class="endpoint-path">/api/feed</h3>
         </div>
       </div>
       <div class="endpoint-body">
@@ -667,7 +721,7 @@ const DOCS_HTML = `<!DOCTYPE html>
         <div class="tester-toolbar">
           <div class="tester-group">
             <span class="tester-label">page:</span>
-            <input type="number" id="feed-page-input" value="1" min="1" class="param-input" onkeydown="if(event.key==='Enter') sendFeedRequest()" />
+            <input type="number" id="feed-page-input" value="1" min="1" class="param-input" aria-label="Feed page number" onkeydown="if(event.key==='Enter') sendFeedRequest()" />
           </div>
           <button class="try-btn" id="feed-btn" onclick="sendFeedRequest()">Send request</button>
         </div>
@@ -710,7 +764,7 @@ const DOCS_HTML = `<!DOCTYPE html>
       <div class="endpoint-header">
         <div class="endpoint-identity">
           <span class="method-get">GET</span>
-          <span class="endpoint-path">/api/search</span>
+          <h3 class="endpoint-path">/api/search</h3>
         </div>
       </div>
       <div class="endpoint-body">
@@ -752,11 +806,11 @@ const DOCS_HTML = `<!DOCTYPE html>
         <div class="tester-toolbar">
           <div class="tester-group">
             <span class="tester-label">q:</span>
-            <input type="text" id="search-q-input" value="meme" class="param-input" placeholder="query" onkeydown="if(event.key==='Enter') sendSearchRequest()" />
+            <input type="text" id="search-q-input" value="meme" class="param-input" placeholder="query" aria-label="Search query" onkeydown="if(event.key==='Enter') sendSearchRequest()" />
           </div>
           <div class="tester-group">
             <span class="tester-label">page:</span>
-            <input type="number" id="search-page-input" value="1" min="1" class="param-input" onkeydown="if(event.key==='Enter') sendSearchRequest()" />
+            <input type="number" id="search-page-input" value="1" min="1" class="param-input" aria-label="Search page number" onkeydown="if(event.key==='Enter') sendSearchRequest()" />
           </div>
           <button class="try-btn" id="search-btn" onclick="sendSearchRequest()">Send request</button>
         </div>
@@ -794,7 +848,7 @@ const DOCS_HTML = `<!DOCTYPE html>
       <div class="endpoint-header">
         <div class="endpoint-identity">
           <span class="method-get">GET</span>
-          <span class="endpoint-path">/health</span>
+          <h3 class="endpoint-path">/health</h3>
         </div>
         <button class="try-btn" id="health-btn" onclick="sendHealthRequest()">Send request</button>
       </div>
@@ -818,10 +872,10 @@ const DOCS_HTML = `<!DOCTYPE html>
 
     <footer>
       <div>
-        Built by <a href="https://thakur.dev" target="_blank" rel="noopener">Pankaj Thakur</a> &bull; Data from <a href="https://www.myinstants.com" target="_blank" rel="noopener">MyInstants</a>
+        Built by <a href="https://thakur.dev" target="_blank" rel="noopener author">Pankaj Thakur</a> &bull; Data from <a href="https://www.myinstants.com" target="_blank" rel="noopener">MyInstants</a>
       </div>
       <div>
-        <a href="https://thakur.dev" target="_blank" rel="noopener">thakur.dev</a>
+        <a href="https://thakur.dev" target="_blank" rel="noopener author">thakur.dev</a>
       </div>
     </footer>
   </main>
@@ -1028,11 +1082,33 @@ const DOCS_HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
+const ROBOTS_TXT = `User-agent: *
+Allow: /
+Sitemap: https://myinstants.thakur.dev/sitemap.xml
+`;
+
+const SITEMAP_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://myinstants.thakur.dev/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>`;
+
 export function docsRoutes() {
   return new Elysia()
     .get("/", ({ set }) => {
       set.headers["content-type"] = "text/html; charset=utf-8";
       return DOCS_HTML;
+    })
+    .get("/robots.txt", ({ set }) => {
+      set.headers["content-type"] = "text/plain; charset=utf-8";
+      return ROBOTS_TXT;
+    })
+    .get("/sitemap.xml", ({ set }) => {
+      set.headers["content-type"] = "application/xml; charset=utf-8";
+      return SITEMAP_XML;
     })
     .get("/favicon.ico", ({ set }) => {
       set.status = 204;

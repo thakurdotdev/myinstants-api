@@ -129,6 +129,26 @@ describe("API Routes Integration & Pagination", () => {
     expect(html).toContain("https://myinstants.thakur.dev");
   });
 
+  it("GET /robots.txt returns 200 plain text with sitemap reference", async () => {
+    const { app } = createTestApp(async () => [], async () => []);
+    const response = await app.handle(new Request("http://localhost/robots.txt"));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/plain");
+    const text = await response.text();
+    expect(text).toContain("User-agent: *");
+    expect(text).toContain("Sitemap: https://myinstants.thakur.dev/sitemap.xml");
+  });
+
+  it("GET /sitemap.xml returns 200 XML sitemap", async () => {
+    const { app } = createTestApp(async () => [], async () => []);
+    const response = await app.handle(new Request("http://localhost/sitemap.xml"));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("application/xml");
+    const xml = await response.text();
+    expect(xml).toContain("<urlset");
+    expect(xml).toContain("https://myinstants.thakur.dev/");
+  });
+
   it("GET /api/feed returns default page 1", async () => {
     let requestedPage: number | undefined;
     const { app } = createTestApp(async (p) => {
